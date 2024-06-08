@@ -5,7 +5,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/pkg/errors"
 	"net/http"
-	"net/url"
 	"strings"
 
 	"github.com/a01k-io/modules/stringops"
@@ -26,17 +25,6 @@ type QueryParamFilter struct {
 	MaxLen            string
 	IgnoreUnknownKeys bool
 	Strip             bool
-}
-
-// ReqInfo holds information of raw request with parsed object
-type ReqInfo struct {
-	RawBody     string      `json:"raw_body" bson:"raw_body"`
-	URL         string      `json:"url" bson:"url"`
-	Method      string      `json:"method" bson:"method"`
-	ClientIP    string      `json:"client_ip" bson:"client_ip"`
-	Headers     http.Header `json:"headers" bson:"headers"`
-	QueryParams url.Values  `json:"query_params" bson:"query_params"`
-	ParsedObj   interface{} `json:"-" bson:"-"`
 }
 
 // Filter defines settings for parser
@@ -160,11 +148,11 @@ func getSortingFields(params []string) ([]*SortingField, error) {
 
 // PaginationQueryParam define schema for pagination query params
 type PaginationQueryParam struct {
-	PageNo   int64               `schema:"page_no"`
-	PageSize int64               `schema:"page_size"`
-	LastID   string              `schema:"last_id"`
-	Type     PaginationQueryType `schema:"pagination_type"`
-	SortBy   []string            `schema:"sort_by"`
+	PageNo   int64               `schema:"page_no" query:"page_no" json:"page_no"`
+	PageSize int64               `schema:"page_size" query:"page_size" json:"page_size"`
+	LastID   string              `schema:"last_id" query:"last_id" json:"last_id"`
+	Type     PaginationQueryType `schema:"pagination_type" query:"pagination_type" json:"pagination_type"`
+	SortBy   []string            `schema:"sort_by" query:"sort_by" json:"sort_by"`
 }
 
 // GetSortingFields parse sort query param and return SortingField array
