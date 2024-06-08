@@ -225,7 +225,7 @@ type PaginatedResponse struct {
 // CreatePaginatedAPIResponse add pagination info in api response
 func CreatePaginatedAPIResponse(records interface{}, paginatedQueryParam PaginationQueryParam, totalCount int) PaginatedResponse {
 	if totalCount == 0 {
-		records = make([]byte, 0)
+		records = map[string]interface{}{}
 	}
 	return PaginatedResponse{
 		Records: records,
