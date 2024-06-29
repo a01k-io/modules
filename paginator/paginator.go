@@ -213,6 +213,7 @@ func NewPaginationQueryParamsF(r *http.Request, filter QueryParamFilter) (*Pagin
 type PaginationInfo struct {
 	PageNo     int64 `json:"page_no"`
 	PageSize   int64 `json:"page_size"`
+	TotalPages int64 `json:"total_pages"`
 	TotalCount int   `json:"total_count"`
 }
 
@@ -223,7 +224,7 @@ type PaginatedResponse struct {
 }
 
 // CreatePaginatedAPIResponse add pagination info in api response
-func CreatePaginatedAPIResponse(records interface{}, paginatedQueryParam PaginationQueryParam, totalCount int) PaginatedResponse {
+func CreatePaginatedAPIResponse(records interface{}, paginatedQueryParam PaginationQueryParam, totalCount int, totalPages int64) PaginatedResponse {
 	if totalCount == 0 {
 		records = make([]interface{}, 0)
 	}
@@ -232,6 +233,7 @@ func CreatePaginatedAPIResponse(records interface{}, paginatedQueryParam Paginat
 		Pagination: PaginationInfo{
 			PageSize:   paginatedQueryParam.PageSize,
 			PageNo:     paginatedQueryParam.PageNo,
+			TotalPages: totalPages,
 			TotalCount: totalCount,
 		},
 	}
