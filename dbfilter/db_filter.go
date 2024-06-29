@@ -92,6 +92,23 @@ func (f *QueryBuilder) ToMongo(opts *options.FindOptions) (bson.M, error) {
 	return filter, nil
 }
 
+func GetAggregationQuery(filter bson.M, options *options.FindOptions) []bson.M {
+	query := []bson.M{{"$match": filter}}
+
+	if options.Sort != nil {
+		query = append(query, bson.M{"$sort": options.Sort})
+	}
+
+	if options.Skip != nil {
+		query = append(query, bson.M{"$skip": options.Skip})
+	}
+
+	if options.Limit != nil {
+		query = append(query, bson.M{"$limit": options.Limit})
+	}
+	return query
+}
+
 // BuildQuery builds query using pagination params and filter
 func BuildQuery(filter bson.M, paginationParameter paginator.PaginationQueryParam) (*QueryBuilder, error) {
 	var qb QueryBuilder
