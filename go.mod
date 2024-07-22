@@ -5,6 +5,7 @@ go 1.22
 require (
 	github.com/gofiber/fiber/v2 v2.52.5
 	github.com/gorilla/schema v1.4.1
+	github.com/matoous/go-nanoid v1.5.0
 	github.com/pkg/errors v0.9.1
 	github.com/rs/zerolog v1.33.0
 	github.com/stretchr/testify v1.9.0
