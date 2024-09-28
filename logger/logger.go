@@ -32,6 +32,18 @@ func New(service string) *Wrapper {
 	}
 }
 
+func (logger *Wrapper) WithField(key, value string) *Wrapper {
+	newLogger := logger.lg.With().Fields(map[string]any{key: value}).Logger()
+	return &Wrapper{
+		lg: newLogger,
+	}
+}
+
+func (logger *Wrapper) Field(key, value string) *Wrapper {
+	logger.lg = logger.lg.With().Fields(map[string]any{key: value}).Logger()
+	return logger
+}
+
 func (logger *Wrapper) Debug(message string) {
 	logger.lg.Debug().Caller(1, 2, 3).Msg(message)
 }

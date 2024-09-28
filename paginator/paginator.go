@@ -2,21 +2,21 @@ package paginator
 
 import (
 	"fmt"
-	"github.com/gofiber/fiber/v2"
-	"github.com/pkg/errors"
 	"net/http"
 	"strings"
 
 	"github.com/a01k-io/modules/stringops"
+	"github.com/gofiber/fiber/v2"
 	"github.com/gorilla/schema"
+	"github.com/pkg/errors"
 )
 
 var (
 	//URLParamDecoder returns a new Decoder
 	//For parsing url query params
 	URLParamDecoder       = schema.NewDecoder()
-	minPageSize     int64 = 50
-	maxPageSize     int64 = 100
+	minPageSize     int64 = 5
+	maxPageSize     int64 = 25
 )
 
 // QueryParamFilter defines settings for query parser
