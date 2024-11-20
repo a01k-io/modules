@@ -9,7 +9,6 @@ import (
 
 func mapSortByToDefault(sortBy []string) []clause.OrderByColumn {
 	columns := make([]clause.OrderByColumn, 0)
-
 	for _, sort := range sortBy {
 		parts := strings.Split(sort, ":")
 		fieldName := parts[0]
@@ -22,12 +21,13 @@ func mapSortByToDefault(sortBy []string) []clause.OrderByColumn {
 		columnName := schema.NamingStrategy{}.ColumnName("", fieldName)
 		columns = append(columns, clause.OrderByColumn{Column: clause.Column{Name: columnName}, Desc: desc})
 	}
-
 	return columns
 }
 
 // BuildPaginationQuery builds pagination SQL clauses without directly using gorm.DB.
-func BuildPaginationQuery(params PaginationQueryParam, sortByColumns []clause.OrderByColumn) (clauses []clause.Expression) {
+func BuildPaginationQuery(params PaginationQueryParam) (clauses []clause.Expression) {
+	sortByColumns := mapSortByToDefault(params.SortBy)
+
 	// Add sorting
 	if len(sortByColumns) > 0 {
 		clauses = append(clauses, clause.OrderBy{

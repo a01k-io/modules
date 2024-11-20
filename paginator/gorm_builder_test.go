@@ -13,7 +13,6 @@ func TestBuildPaginationQuery(t *testing.T) {
 	tests := []struct {
 		name            string
 		params          paginator.PaginationQueryParam
-		sortByColumns   []clause.OrderByColumn
 		expectedClauses []clause.Expression
 	}{
 		{
@@ -23,10 +22,6 @@ func TestBuildPaginationQuery(t *testing.T) {
 				LastID:   "5",
 				Type:     paginator.NextPage,
 				SortBy:   []string{"TenantID:desc", "Name:asc"},
-			},
-			sortByColumns: []clause.OrderByColumn{
-				{Column: clause.Column{Name: "tenant_id"}, Desc: true},
-				{Column: clause.Column{Name: "name"}, Desc: false},
 			},
 			expectedClauses: []clause.Expression{
 				clause.OrderBy{
@@ -51,9 +46,7 @@ func TestBuildPaginationQuery(t *testing.T) {
 			params: paginator.PaginationQueryParam{
 				PageSize: 5,
 				Type:     paginator.PrevPage,
-			},
-			sortByColumns: []clause.OrderByColumn{
-				{Column: clause.Column{Name: "name"}, Desc: true},
+				SortBy:   []string{"Name:desc"},
 			},
 			expectedClauses: []clause.Expression{
 				clause.OrderBy{
@@ -64,11 +57,19 @@ func TestBuildPaginationQuery(t *testing.T) {
 				clause.Limit{Limit: pointy.Pointer(5)},
 			},
 		},
+		{
+			name: "No sorting, no LastID",
+			params: paginator.PaginationQueryParam{
+				PageSize: 20,
+			},
+			expectedClauses: []clause.Expression{
+				clause.Limit{Limit: pointy.Pointer(20)},
+			},
+		},
 	}
-
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			actualClauses := paginator.BuildPaginationQuery(tt.params, tt.sortByColumns)
+			actualClauses := paginator.BuildPaginationQuery(tt.params)
 
 			// Check that the number of clauses matches
 			assert.Equal(t, len(tt.expectedClauses), len(actualClauses), "Mismatch in number of clauses")
