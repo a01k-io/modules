@@ -155,6 +155,14 @@ type PaginationQueryParam struct {
 	SortBy   []string            `schema:"sort_by" query:"sort_by" json:"sort_by"`
 }
 
+func intPInt(i int) *int {
+	return &i
+}
+
+func (p *PaginationQueryParam) PageSizePInt() *int {
+	return intPInt(int(p.PageSize))
+}
+
 // GetSortingFields parse sort query param and return SortingField array
 func (p *PaginationQueryParam) GetSortingFields() ([]*SortingField, error) {
 	return getSortingFields(p.SortBy)
