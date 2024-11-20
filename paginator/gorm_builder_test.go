@@ -1,11 +1,11 @@
 package paginator_test
 
 import (
+	"github.com/a01k-io/modules/paginator"
+	"go.openly.dev/pointy"
 	"testing"
 
-	"github.com/a01k-io/modules/paginator"
 	"github.com/stretchr/testify/assert"
-	"go.openly.dev/pointy"
 	"gorm.io/gorm/clause"
 )
 
@@ -16,67 +16,67 @@ func TestBuildPaginationQuery(t *testing.T) {
 		expectedClauses []clause.Expression
 	}{
 		{
-			name: "Next page with sort and limit",
+			name: "Next page with limit and offset",
+			params: paginator.PaginationQueryParam{
+				PageSize: 6,
+				PageNo:   2,
+				SortBy:   []string{"created_at:desc"},
+			},
+			expectedClauses: []clause.Expression{
+				clause.OrderBy{
+					Columns: []clause.OrderByColumn{
+						{Column: clause.Column{Name: "created_at"}, Desc: true},
+					},
+				},
+				clause.Limit{
+					Limit:  pointy.Pointer(6),
+					Offset: 6, // (PageNo - 1) * PageSize
+				},
+			},
+		},
+		{
+			name: "First page without offset",
 			params: paginator.PaginationQueryParam{
 				PageSize: 10,
-				LastID:   "5",
-				Type:     paginator.NextPage,
-				SortBy:   []string{"TenantID:desc", "Name:asc"},
+				PageNo:   1,
+				SortBy:   []string{"id:asc"},
 			},
 			expectedClauses: []clause.Expression{
 				clause.OrderBy{
 					Columns: []clause.OrderByColumn{
-						{Column: clause.Column{Name: "tenant_id"}, Desc: true},
-						{Column: clause.Column{Name: "name"}, Desc: false},
+						{Column: clause.Column{Name: "id"}, Desc: false},
 					},
 				},
-				clause.Limit{Limit: pointy.Pointer(10)},
-				clause.Where{
-					Exprs: []clause.Expression{
-						clause.Expr{
-							SQL:  "id > ?",
-							Vars: []interface{}{"5"},
-						},
-					},
+				clause.Limit{
+					Limit:  pointy.Pointer(10),
+					Offset: 0,
 				},
 			},
 		},
 		{
-			name: "Previous page without LastID",
+			name: "Page size only, no sorting or page number",
 			params: paginator.PaginationQueryParam{
 				PageSize: 5,
-				Type:     paginator.PrevPage,
-				SortBy:   []string{"Name:desc"},
 			},
 			expectedClauses: []clause.Expression{
-				clause.OrderBy{
-					Columns: []clause.OrderByColumn{
-						{Column: clause.Column{Name: "name"}, Desc: true},
-					},
+				clause.Limit{
+					Limit:  pointy.Pointer(5),
+					Offset: 0,
 				},
-				clause.Limit{Limit: pointy.Pointer(5)},
-			},
-		},
-		{
-			name: "No sorting, no LastID",
-			params: paginator.PaginationQueryParam{
-				PageSize: 20,
-			},
-			expectedClauses: []clause.Expression{
-				clause.Limit{Limit: pointy.Pointer(20)},
 			},
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			actualClauses := paginator.BuildPaginationQuery(tt.params)
 
-			// Check that the number of clauses matches
-			assert.Equal(t, len(tt.expectedClauses), len(actualClauses), "Mismatch in number of clauses")
+			// Проверяем количество клауза
+			assert.Equal(t, len(tt.expectedClauses), len(actualClauses), "Количество выражений не совпадает")
 
-			// Compare each clause
+			// Проверяем каждое выражение
 			for i := range tt.expectedClauses {
-				assert.Equal(t, tt.expectedClauses[i], actualClauses[i], "Clause %d mismatch", i)
+				assert.Equal(t, tt.expectedClauses[i], actualClauses[i], "Клауз %d не совпадает", i)
 			}
 		})
 	}
