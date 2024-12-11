@@ -2,6 +2,7 @@ package paginator
 
 import (
 	"fmt"
+	"math"
 	"net/http"
 	"strings"
 
@@ -232,7 +233,7 @@ type PaginatedResponse struct {
 }
 
 // CreatePaginatedAPIResponse add pagination info in api response
-func CreatePaginatedAPIResponse(records interface{}, paginatedQueryParam PaginationQueryParam, totalCount int, totalPages int64) PaginatedResponse {
+func CreatePaginatedAPIResponse(records interface{}, paginatedQueryParam PaginationQueryParam, totalCount int) PaginatedResponse {
 	if totalCount == 0 {
 		records = make([]interface{}, 0)
 	}
@@ -241,7 +242,7 @@ func CreatePaginatedAPIResponse(records interface{}, paginatedQueryParam Paginat
 		Pagination: PaginationInfo{
 			PageSize:   paginatedQueryParam.PageSize,
 			PageNo:     paginatedQueryParam.PageNo,
-			TotalPages: totalPages,
+			TotalPages: int64(math.Ceil(float64(totalCount) / float64(paginatedQueryParam.PageSize))),
 			TotalCount: totalCount,
 		},
 	}
