@@ -223,7 +223,7 @@ type PaginationInfo struct {
 	PageNo     int64 `json:"page_no"`
 	PageSize   int64 `json:"page_size"`
 	TotalPages int64 `json:"total_pages"`
-	TotalCount int   `json:"total_count"`
+	TotalCount int64 `json:"total_count"`
 }
 
 // PaginatedResponse contain records and pagination info
@@ -233,7 +233,7 @@ type PaginatedResponse struct {
 }
 
 // CreatePaginatedAPIResponse add pagination info in api response
-func CreatePaginatedAPIResponse(records interface{}, paginatedQueryParam PaginationQueryParam, totalCount int) PaginatedResponse {
+func CreatePaginatedAPIResponse(records interface{}, paginatedQueryParam PaginationQueryParam, totalCount int64) PaginatedResponse {
 	if totalCount == 0 {
 		records = make([]interface{}, 0)
 	}
