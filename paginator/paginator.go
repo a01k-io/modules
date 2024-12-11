@@ -16,8 +16,8 @@ var (
 	//URLParamDecoder returns a new Decoder
 	//For parsing url query params
 	URLParamDecoder       = schema.NewDecoder()
-	minPageSize     int64 = 5
-	maxPageSize     int64 = 25
+	minPageSize     int64 = 1
+	maxPageSize     int64 = 50
 )
 
 // QueryParamFilter defines settings for query parser
